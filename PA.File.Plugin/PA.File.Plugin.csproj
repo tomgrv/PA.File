@@ -5,7 +5,6 @@
     <RootNamespace>PA.File.Plugin</RootNamespace>
     <AssemblyName>PA.File.Plugin</AssemblyName>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <PropertyGroup>
@@ -13,22 +12,19 @@
     <Authors>tomgrv</Authors>
     <Company>Perspikapps</Company>
     <Product>PA.File</Product>
-    <Copyright />
+    <Copyright>Perspikapps 2020</Copyright>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Common.Logging" Version="3.4.1" />
-    <PackageReference Include="GitVersionTask">
-      <Version>5.5.0</Version>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    <PackageReference Include="GitVersion.MsBuild" Version="5.6.3">
       <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="PA.Plugin">
-      <Version>4.7.4</Version>
-    </PackageReference>
+    <PackageReference Include="PA.Plugin" Version="4.7.4" />
     <PackageReference Include="PA.Plugin.Operations">
       <Version>4.7.4</Version>
     </PackageReference>
-    <PackageReference Include="System.ComponentModel.Composition" Version="4.7.0" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="5.0.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
