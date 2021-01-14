@@ -8,55 +8,46 @@ namespace PA.File
 {
     public partial class FolderBrowser : UserControl
     {
-        public string SelectedPath
-        {
-            get
-            {
-                return this.dialog.SelectedPath;
-            }
-        }
-
         public FolderBrowser()
         {
             InitializeComponent();
         }
 
+        public string SelectedPath => dialog.SelectedPath;
+
         public event EventHandler FolderSelected;
 
         protected virtual void OnFolderSelected(EventArgs e)
         {
-            this.folder.ForeColor = System.Drawing.SystemColors.WindowText;
+            folder.ForeColor = SystemColors.WindowText;
 
-            if (this.FolderSelected != null)
-            {
-                this.FolderSelected(this, e);
-            }
+            if (FolderSelected != null) FolderSelected(this, e);
         }
 
         private void browse_Click(object sender, EventArgs e)
         {
-            this.OnClick(e);
-            if (this.dialog.ShowDialog() == DialogResult.OK)
+            OnClick(e);
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
-                this.folder.Text = this.dialog.SelectedPath;
-                this.OnFolderSelected(e);
+                folder.Text = dialog.SelectedPath;
+                OnFolderSelected(e);
             }
         }
 
         private void folder_Validated(object sender, EventArgs e)
         {
-            this.OnValidated(e);
-            this.dialog.SelectedPath = this.folder.Text;
-            this.OnFolderSelected(e);
+            OnValidated(e);
+            dialog.SelectedPath = folder.Text;
+            OnFolderSelected(e);
         }
 
         private void folder_Validating(object sender, CancelEventArgs e)
         {
-            this.OnValidating(e);
-            if (!e.Cancel && !Directory.Exists(this.folder.Text))
+            OnValidating(e);
+            if (!e.Cancel && !Directory.Exists(folder.Text))
             {
                 e.Cancel = true;
-                this.folder.ForeColor = Color.Red;
+                folder.ForeColor = Color.Red;
             }
         }
     }

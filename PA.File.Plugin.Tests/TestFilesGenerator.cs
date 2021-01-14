@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace PA.File.Plugin.Tests
 {
-    static class TestFilesGenerator
+    internal static class TestFilesGenerator
     {
         public static DirectoryInfo GenerateFiles()
         {
-            var top = new DirectoryInfo(Path.GetTempPath() +  "testfiles");
-            var ext = new string[] { "ext1", "ext2", "ext3" };
-            var dir = new string[] { "dir1", "dir2", "dir3" };
+            var top = new DirectoryInfo(Path.GetTempPath() + "testfiles");
+            var ext = new[] {"ext1", "ext2", "ext3"};
+            var dir = new[] {"dir1", "dir2", "dir3"};
 
             top.Create();
 
@@ -22,17 +17,15 @@ namespace PA.File.Plugin.Tests
                 var sub = top.CreateSubdirectory(d);
 
                 foreach (var e in ext)
-                {
-                    for (int i = 1; i < 30; i++)
+                    for (var i = 1; i < 30; i++)
                     {
-                        var f = new FileInfo(sub.FullName + Path.DirectorySeparatorChar + "file_" + sub.Name+"_"+ i + "." + e);
+                        var f = new FileInfo(sub.FullName + Path.DirectorySeparatorChar + "file_" + sub.Name + "_" + i +
+                                             "." + e);
                         f.Create();
                     }
-                }
             }
 
             return top;
         }
-
     }
 }

@@ -1,92 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PA.File.Handlers
 {
     public class KvpFileHandler : IFileObject
     {
-        public string FileName { get; private set; }
+        private readonly Func<string, IEnumerable<string>> parser;
+
+        public KvpFileHandler(string file, Func<string, IEnumerable<string>> lineparser = null,
+            params string[] extensions)
+        {
+            FileName = file;
+            Data = new KeyValuePairList();
+            Extensions = extensions;
+            parser = lineparser;
+        }
+
         public KeyValuePairList Data { get; private set; }
         public DateTime LastRefresh { get; private set; }
-        public string[] Extensions { get; private set; }
-
-        public class KeyValuePairList : List<KeyValuePairList>
-        {
-            public string Key { get; private set; }
-
-            internal KeyValuePairList(string key, string value)
-                : base(new KeyValuePairList(value))
-            {
-                this.Key = key;
-            }
-
-            internal KeyValuePairList(string key = null)
-                : base()
-            {
-                this.Key = key;
-            }
-
-            public override string ToString()
-            {
-                return this.Key ?? base.ToString();
-            }
-        }
-
-        private Func<string, IEnumerable<string>> parser;
-
-        public KvpFileHandler(string file, Func<string, IEnumerable<string>> lineparser = null, params string[] extensions)
-        {
-
-            this.FileName = file;
-            this.Data = new KeyValuePairList();
-            this.Extensions = extensions;
-            this.parser = lineparser;
-        }
+        public string[] Extensions { get; }
+        public string FileName { get; }
 
         public bool Refresh(bool force = false)
         {
+            var p = new FileInfo(FileName);
 
-            var p = new FileInfo(this.FileName);
-
-            if (this.LastRefresh.AddHours(1) > DateTime.Now && !force)
-            {
-                return false;
-            }
+            if (LastRefresh.AddHours(1) > DateTime.Now && !force) return false;
 
             if (p.Exists)
             {
-                KeyValuePairList loaded = new KeyValuePairList();
+                var loaded = new KeyValuePairList();
 
-                using (StreamReader sr = p.OpenText())
+                using (var sr = p.OpenText())
                 {
                     while (!sr.EndOfStream)
                     {
-                        KeyValuePairList tmp_l = loaded;
-                        KeyValuePairList tmp_d = this.Data;
+                        var tmp_l = loaded;
+                        var tmp_d = Data;
 
-                        string parent = string.Empty;
+                        var parent = string.Empty;
 
-                        foreach (string s in this.parser(sr.ReadLine()))
-                        {  
-                            if (!tmp_l.Exists(i => i.Key == s))
-                            {
-                                tmp_l.Add(new KeyValuePairList(s));
-                            }
+                        foreach (var s in parser(sr.ReadLine()))
+                        {
+                            if (!tmp_l.Exists(i => i.Key == s)) tmp_l.Add(new KeyValuePairList(s));
 
                             if (!tmp_d.Exists(i => i.Key == s))
                             {
-                             //   yield return parent.Length > 0 ? parent + "_"+ s : s;
+                                //   yield return parent.Length > 0 ? parent + "_"+ s : s;
                             }
 
-                            if (parent.Length == 0)
-                            {
-                                parent = s;
-                            }
+                            if (parent.Length == 0) parent = s;
 
                             tmp_l = tmp_l.Find(i => i.Key == s);
                             tmp_d = tmp_d.Find(i => i.Key == s) ?? new KeyValuePairList(s);
@@ -95,16 +59,34 @@ namespace PA.File.Handlers
                 }
 
 
-                this.LastRefresh = DateTime.Now;
+                LastRefresh = DateTime.Now;
 
-                this.Data.Clear();
-                this.Data = loaded;
-
-               
+                Data.Clear();
+                Data = loaded;
             }
 
             return true;
         }
+
+        public class KeyValuePairList : List<KeyValuePairList>
+        {
+            internal KeyValuePairList(string key, string value)
+                : base(new KeyValuePairList(value))
+            {
+                Key = key;
+            }
+
+            internal KeyValuePairList(string key = null)
+            {
+                Key = key;
+            }
+
+            public string Key { get; }
+
+            public override string ToString()
+            {
+                return Key ?? base.ToString();
+            }
+        }
     }
 }
-
